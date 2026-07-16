@@ -58,6 +58,7 @@ export default async (req) => {
         model: "claude-sonnet-5",
         max_tokens: MAX_OUTPUT_TOKENS,
         system: SYSTEM_PROMPT,
+        thinking: { type: "disabled" },
         messages: [{ role: "user", content: text }]
       })
     });
@@ -65,19 +66,12 @@ export default async (req) => {
     return jsonResponse(502, { error: "Could not reach Claude" });
   }
 
-  const rawText = await anthropicRes.text();
-
   if (!anthropicRes.ok) {
-    return jsonResponse(502, { error: "Claude request failed", debugStatus: anthropicRes.status, debugBody: rawText.slice(0, 2000) });
+    return jsonResponse(502, { error: "Claude request failed" });
   }
 
-  let data;
-  try {
-    data = JSON.parse(rawText);
-  } catch {
-    return jsonResponse(502, { error: "Unexpected response from Claude", debugBody: rawText.slice(0, 2000) });
-  }
-  const analysis = data?.content?.[0]?.text ?? "";
+  const data = await anthropicRes.json();
+  const analysis = (data?.content || []).find((b) => b.type === "text")?.text ?? "";
 
-  return jsonResponse(200, { analysis, debugRaw: rawText.slice(0, 2000) });
+  return jsonResponse(200, { analysis });
 };
