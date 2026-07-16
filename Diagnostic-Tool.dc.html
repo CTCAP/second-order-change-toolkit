@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  body { margin: 0; background: #FAF7F1; }
+  a { color: #2B6E6E; text-decoration: none; }
+  a:hover { color: #23201B; text-decoration: underline; }
+</style>
+</helmet>
+<div style="font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; color: #23201B; max-width: 720px; margin: 0 auto; padding: 56px 24px 100px;">
+
+  <a href="Landing.dc.html" style="font-size: 13px; color: #5B564C; display: inline-block; margin-bottom: 28px;">&larr; Second-Order Change Toolkit</a>
+
+  <header style="margin-bottom: 36px;">
+    <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #2B6E6E; font-weight: 600; margin-bottom: 10px;">Bateson &middot; Watzlawick</div>
+    <h1 style="font-family: Georgia, serif; font-size: 34px; line-height: 1.12; margin: 0 0 12px; font-weight: 600;">Second-Order Change<br/>Diagnostic</h1>
+    <p style="font-size: 15px; color: #5B564C; margin: 0; max-width: 46ch;">Paste an email or exchange. Work the seven checks. Land on a verdict.</p>
+  </header>
+
+  <section style="background: #fff; border: 1px solid #DED6C6; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #5B564C; font-weight: 600; margin-bottom: 10px;">The exchange</label>
+    <textarea placeholder="Paste the email, message, or a summary of the conversation here&hellip;" value="{{ text }}" onChange="{{ onTextChange }}" rows="7" style="width: 100%; box-sizing: border-box; font-family: -apple-system, sans-serif; font-size: 14.5px; line-height: 1.5; color: #23201B; border: 1px solid #DED6C6; border-radius: 3px; padding: 12px; resize: vertical; background: #FAF7F1;"></textarea>
+  </section>
+
+  <div style="display: flex; flex-direction: column; gap: 1px; background: #DED6C6; border: 1px solid #DED6C6; border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
+    <sc-for list="{{ steps }}" as="step" hint-placeholder-count="7">
+      <div style="background: #fff;">
+        <button onClick="{{ step.headOnClick }}" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: {{ step.headBg }}; border: none; cursor: pointer; text-align: left; font-family: inherit;">
+          <span style="font-family: Georgia, serif; color: #2B6E6E; font-size: 13px; font-weight: 600; width: 22px;">{{ step.numStr }}</span>
+          <span style="flex: 1; font-size: 15.5px; font-weight: 600;">{{ step.title }}</span>
+          <span style="color: #5B564C; font-size: 18px; width: 16px; text-align: center;">{{ step.chevron }}</span>
+        </button>
+        <sc-if value="{{ step.isOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 4px 20px 20px 56px;">
+            <ul style="list-style: none; margin: 0 0 4px; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+              <sc-for list="{{ step.items }}" as="it" hint-placeholder-count="3">
+                <li>
+                  <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.45; cursor: pointer; color: {{ it.textColor }};">
+                    <input type="checkbox" checked="{{ it.checked }}" onChange="{{ it.toggle }}" style="margin-top: 3px; accent-color: #2B6E6E; width: 15px; height: 15px; flex-shrink: 0;"/>
+                    <span>{{ it.text }}</span>
+                  </label>
+                </li>
+              </sc-for>
+            </ul>
+            <textarea placeholder="Notes on this check&hellip;" value="{{ step.noteValue }}" onChange="{{ step.noteOnChange }}" rows="2" style="width: 100%; box-sizing: border-box; margin-top: 12px; font-size: 13.5px; font-family: -apple-system, sans-serif; line-height: 1.5; color: #23201B; border: 1px solid #DED6C6; border-radius: 3px; padding: 12px; resize: vertical; background: #FAF7F1;"></textarea>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+
+  <section style="background: #fff; border: 1px solid #DED6C6; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #5B564C; font-weight: 600; margin-bottom: 10px;">Overall verdict</label>
+    <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+      <sc-for list="{{ verdicts }}" as="v" hint-placeholder-count="3">
+        <button onClick="{{ v.onClick }}" style="{{ v.style }}">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <textarea placeholder="Your diagnosis, in your own words&hellip;" value="{{ finalNote }}" onChange="{{ onFinalNoteChange }}" rows="3" style="width: 100%; box-sizing: border-box; font-size: 13.5px; font-family: -apple-system, sans-serif; line-height: 1.5; color: #23201B; border: 1px solid #DED6C6; border-radius: 3px; padding: 12px; resize: vertical; background: #FAF7F1;"></textarea>
+    <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
+      <button onClick="{{ saveEntry }}" style="font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 10px 16px; border-radius: 3px; border: 1.5px solid #2B6E6E; background: #2B6E6E; color: #fff; cursor: pointer;">Save this diagnosis</button>
+      <button onClick="{{ openLog }}" style="font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 10px 16px; border-radius: 3px; border: 1.5px solid #DED6C6; background: #fff; color: #23201B; cursor: pointer;">View saved ({{ savedCount }})</button>
+      <button onClick="{{ reset }}" style="font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 10px 16px; border-radius: 3px; border: 1.5px solid transparent; background: #fff; color: #5B564C; cursor: pointer;">Clear</button>
+    </div>
+  </section>
+
+  <sc-if value="{{ showLog }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeLog }}" style="position: fixed; inset: 0; background: rgba(35,32,27,0.4); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 10;">
+      <div onClick="{{ stopProp }}" style="background: #fff; border-radius: 6px; max-width: 520px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h2 style="font-family: Georgia, serif; font-size: 20px; margin: 0;">Saved diagnoses</h2>
+          <button onClick="{{ closeLog }}" style="font-family: inherit; font-size: 13px; font-weight: 600; padding: 6px 10px; border-radius: 3px; border: 1.5px solid transparent; background: #fff; color: #5B564C; cursor: pointer;">Close</button>
+        </div>
+        <sc-if value="{{ hasNoSaved }}" hint-placeholder-val="{{ false }}">
+          <p style="color: #5B564C; font-size: 14px;">Nothing saved yet.</p>
+        </sc-if>
+        <sc-for list="{{ savedList }}" as="e" hint-placeholder-count="0">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid #DED6C6; gap: 10px;">
+            <div onClick="{{ e.onLoad }}" style="cursor: pointer; flex: 1; display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 14px; font-weight: 600;">{{ e.title }}</span>
+              <span style="font-size: 12px; color: #5B564C;">{{ e.meta }}</span>
+            </div>
+            <button onClick="{{ e.onDelete }}" style="font-family: inherit; font-size: 12.5px; font-weight: 600; padding: 6px 10px; border-radius: 3px; border: 1.5px solid transparent; background: #fff; color: #5B564C; cursor: pointer;">Delete</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <footer style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #DED6C6;">
+    <p style="font-size: 12.5px; line-height: 1.6; color: #9AA4AF; font-style: italic; margin: 0;">Saved locally in this browser only.</p>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STEPS = [
+  { key: "punctuation", title: "Locate the punctuation", items: [
+    "Whose account of \u201cwhat started this\u201d is embedded in the message?",
+    "Is it stated as settled fact, or visibly one reading among others?",
+    "Could the other party punctuate the same sequence differently \u2014 and still be right from where they sit?"
+  ]},
+  { key: "classify", title: "Classify the move", items: [
+    "Adjusts amount, frequency, wording, process, or who-does-what within existing rules \u2192 first-order",
+    "Proposes changing the rules themselves \u2014 authority, role, what the relationship is \u2192 second-order",
+    "Uses second-order language (structure, trust, role) but the ask is still \u201cdo the existing thing better\u201d \u2192 disguised first-order"
+  ]},
+  { key: "moreofsame", title: "Check for \u201cmore of the same\u201d", items: [
+    "Is the proposed fix structurally identical to something already tried, just intensified?",
+    "Is the attempted solution plausibly part of the problem rather than the cure?"
+  ]},
+  { key: "doublebind", title: "Check for double-bind structure", items: [
+    "Are there two injunctions at different levels that can't both be honoured?",
+    "Is naming the contradiction itself treated as the violation?",
+    "Is there any way to respond that isn't penalised either way?"
+  ]},
+  { key: "reframe", title: "Test the reframe", items: [
+    "If the other party fully accepted this frame, what new moves become possible?",
+    "If the honest answer is \u2018none, it's the same ask restated\u2019 \u2014 it's first-order in second-order clothing."
+  ]},
+  { key: "namelevel", title: "Decide whether to name the level", items: [
+    "Would naming the level explicitly help here?",
+    "Or would naming it trigger defensiveness, so an oblique reframe lands better?",
+    "Either way \u2014 is this a deliberate choice, or a default you fell into?"
+  ]},
+  { key: "sustain", title: "Sustainability check", items: [
+    "If this reframe is accepted, what stops the system reverting to first-order next time a similar issue arises?",
+    "Does the message build in a way to re-challenge the frame later, or treat it as a one-off fix?"
+  ]}
+];
+
+const VERDICTS = [
+  { key: "first", label: "First-order", color: "#B5533C" },
+  { key: "disguised", label: "Disguised first-order", color: "#B8863B" },
+  { key: "second", label: "Second-order", color: "#2B6E6E" }
+];
+
+const STORAGE_KEY = "second-order-change-diagnostic-log";
+
+class Component extends DCLogic {
+  state = {
+    text: "",
+    notes: {},
+    checked: {},
+    verdict: null,
+    finalNote: "",
+    saved: [],
+    showLog: false,
+    openStep: 0
+  };
+
+  componentDidMount() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) this.setState({ saved: JSON.parse(raw) });
+    } catch (e) {}
+  }
+
+  persist(saved) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch (e) {}
+  }
+
+  toggleCheck(stepKey, idx) {
+    const k = stepKey + "-" + idx;
+    this.setState(s => ({ checked: { ...s.checked, [k]: !s.checked[k] } }));
+  }
+
+  saveEntry() {
+    const s = this.state;
+    const entry = {
+      id: Date.now(),
+      title: s.text.slice(0, 60) || "Untitled exchange",
+      text: s.text, notes: s.notes, checked: s.checked, verdict: s.verdict, finalNote: s.finalNote,
+      date: new Date().toLocaleDateString()
+    };
+    const next = [entry, ...s.saved].slice(0, 50);
+    this.setState({ saved: next });
+    this.persist(next);
+  }
+
+  loadEntry(entry) {
+    this.setState({
+      text: entry.text || "", notes: entry.notes || {}, checked: entry.checked || {},
+      verdict: entry.verdict || null, finalNote: entry.finalNote || "", showLog: false, openStep: 0
+    });
+  }
+
+  deleteEntry(id) {
+    const next = this.state.saved.filter(e => e.id !== id);
+    this.setState({ saved: next });
+    this.persist(next);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const verdictColor = VERDICTS.find(v => v.key === s.verdict)?.color;
+
+    const steps = STEPS.map((step, i) => ({
+      key: step.key,
+      title: step.title,
+      numStr: String(i + 1).padStart(2, "0"),
+      isOpen: s.openStep === i,
+      chevron: s.openStep === i ? "\u2212" : "+",
+      headBg: s.openStep === i ? "#FAF7F1" : "transparent",
+      headOnClick: () => this.setState({ openStep: s.openStep === i ? -1 : i }),
+      noteValue: s.notes[step.key] || "",
+      noteOnChange: (e) => { const v = e.target.value; this.setState(prev => ({ notes: { ...prev.notes, [step.key]: v } })); },
+      items: step.items.map((text, idx) => {
+        const checked = !!s.checked[step.key + "-" + idx];
+        return { text, checked, textColor: checked ? "#23201B" : "#5B564C", toggle: () => this.toggleCheck(step.key, idx) };
+      })
+    }));
+
+    const verdicts = VERDICTS.map(v => {
+      const active = s.verdict === v.key;
+      const base = "font-family:inherit;font-size:13px;font-weight:600;padding:9px 14px;border-radius:3px;cursor:pointer;";
+      const style = active
+        ? base + `border:1.5px solid ${v.color};color:${v.color};background:color-mix(in srgb, ${v.color} 8%, white);`
+        : base + `border:1.5px solid #DED6C6;color:#5B564C;background:#fff;`;
+      return { key: v.key, label: v.label, style, onClick: () => this.setState({ verdict: v.key }) };
+    });
+
+    const savedList = s.saved.map(e => ({
+      title: e.title,
+      meta: e.date + " \u00b7 " + (VERDICTS.find(v => v.key === e.verdict)?.label || "no verdict"),
+      onLoad: () => this.loadEntry(e),
+      onDelete: () => this.deleteEntry(e.id)
+    }));
+
+    return {
+      text: s.text,
+      onTextChange: (e) => this.setState({ text: e.target.value }),
+      steps,
+      verdicts,
+      finalNote: s.finalNote,
+      onFinalNoteChange: (e) => this.setState({ finalNote: e.target.value }),
+      saveEntry: () => this.saveEntry(),
+      openLog: () => this.setState({ showLog: true }),
+      closeLog: () => this.setState({ showLog: false }),
+      stopProp: (e) => e.stopPropagation(),
+      reset: () => this.setState({ text: "", notes: {}, checked: {}, verdict: null, finalNote: "", openStep: 0 }),
+      showLog: s.showLog,
+      hasNoSaved: s.saved.length === 0,
+      savedList,
+      savedCount: s.saved.length
+    };
+  }
+}
+
+</script>
+</body>
+</html>
