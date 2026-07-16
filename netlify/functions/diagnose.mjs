@@ -50,7 +50,9 @@ For each of the following checklist items, decide true (this holds, based on the
 
 ${buildFrameworkDescription()}
 
-Then write one short note (1-2 sentences) per check summarizing your reasoning, decide the overall verdict, and write concrete recommendations (2-4 sentences) for how second-order change could actually be implemented in this situation - specific reframes, questions to ask, or structural moves, not generic advice. Base everything only on the text provided; do not invent facts not present in the exchange.
+Decide the overall verdict first, and write the recommendations before anything else: concrete suggestions (strictly 2-3 sentences, no more) for how second-order change could actually be implemented in this situation - specific reframes, questions to ask, or structural moves, not generic advice. This field is the most important part of your answer - never leave it blank.
+
+Only after that, write the per-check notes (strictly one sentence each, max ~20 words - these are secondary, so keep them brief) and decide each of the true/false checklist items. Base everything only on the text provided; do not invent facts not present in the exchange.
 
 Call the submit_diagnosis tool with your answer.`;
 
@@ -86,7 +88,7 @@ const INPUT_SCHEMA = {
 };
 
 const MAX_INPUT_CHARS = 4000;
-const MAX_OUTPUT_TOKENS = 2200;
+const MAX_OUTPUT_TOKENS = 4096;
 
 function jsonResponse(status, body) {
   return new Response(JSON.stringify(body), {
