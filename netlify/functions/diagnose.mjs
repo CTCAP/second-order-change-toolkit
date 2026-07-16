@@ -70,20 +70,23 @@ noteKeys.forEach((key) => {
   noteProps[key] = { type: "string" };
 });
 
+// Order matters: Claude fills tool fields in the order they're listed here.
+// verdict + recommendations come first so they survive if a long exchange
+// makes the model run out of output tokens before reaching items/notes.
 const INPUT_SCHEMA = {
   type: "object",
   properties: {
-    items: { type: "object", properties: itemProps, required: itemKeys, additionalProperties: false },
-    notes: { type: "object", properties: noteProps, required: noteKeys, additionalProperties: false },
     verdict: { type: "string", enum: ["first", "disguised", "second"] },
-    recommendations: { type: "string" }
+    recommendations: { type: "string" },
+    items: { type: "object", properties: itemProps, required: itemKeys, additionalProperties: false },
+    notes: { type: "object", properties: noteProps, required: noteKeys, additionalProperties: false }
   },
-  required: ["items", "notes", "verdict", "recommendations"],
+  required: ["verdict", "recommendations", "items", "notes"],
   additionalProperties: false
 };
 
 const MAX_INPUT_CHARS = 4000;
-const MAX_OUTPUT_TOKENS = 1200;
+const MAX_OUTPUT_TOKENS = 2200;
 
 function jsonResponse(status, body) {
   return new Response(JSON.stringify(body), {
