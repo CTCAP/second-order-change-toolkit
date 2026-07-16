@@ -65,13 +65,20 @@ export default async (req) => {
     return jsonResponse(502, { error: "Could not reach Claude" });
   }
 
+  const rawText = await anthropicRes.text();
+  console.log("anthropic status " + anthropicRes.status + " body: " + rawText.slice(0, 2000));
+
   if (!anthropicRes.ok) {
     return jsonResponse(502, { error: "Claude request failed" });
   }
 
-  const data = await anthropicRes.json();
-  console.log("anthropic response shape:", JSON.stringify({ stop_reason: data.stop_reason, content: data.content, usage: data.usage }));
-  const analysis = data.content?.[0]?.text ?? "";
+  let data;
+  try {
+    data = JSON.parse(rawText);
+  } catch {
+    return jsonResponse(502, { error: "Unexpected response from Claude" });
+  }
+  const analysis = data?.content?.[0]?.text ?? "";
 
   return jsonResponse(200, { analysis });
 };
