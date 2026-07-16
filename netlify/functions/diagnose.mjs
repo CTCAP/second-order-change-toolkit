@@ -66,19 +66,18 @@ export default async (req) => {
   }
 
   const rawText = await anthropicRes.text();
-  console.log("anthropic status " + anthropicRes.status + " body: " + rawText.slice(0, 2000));
 
   if (!anthropicRes.ok) {
-    return jsonResponse(502, { error: "Claude request failed" });
+    return jsonResponse(502, { error: "Claude request failed", debugStatus: anthropicRes.status, debugBody: rawText.slice(0, 2000) });
   }
 
   let data;
   try {
     data = JSON.parse(rawText);
   } catch {
-    return jsonResponse(502, { error: "Unexpected response from Claude" });
+    return jsonResponse(502, { error: "Unexpected response from Claude", debugBody: rawText.slice(0, 2000) });
   }
   const analysis = data?.content?.[0]?.text ?? "";
 
-  return jsonResponse(200, { analysis });
+  return jsonResponse(200, { analysis, debugRaw: rawText.slice(0, 2000) });
 };
