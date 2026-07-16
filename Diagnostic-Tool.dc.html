@@ -33,11 +33,8 @@
         <span style="font-size: 12.5px; color: #B5533C;">{{ aiError }}</span>
       </sc-if>
     </div>
-    <sc-if value="{{ hasAiResult }}" hint-placeholder-val="{{ false }}">
-      <div style="margin-top: 14px; padding: 14px 16px; background: #FAF7F1; border: 1px solid #DED6C6; border-radius: 3px; font-size: 13.5px; line-height: 1.6; white-space: pre-wrap;">
-        <div style="font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #5B564C; font-weight: 600; margin-bottom: 8px;">Claude's read</div>
-        {{ aiResult }}
-      </div>
+    <sc-if value="{{ hasAiHint }}" hint-placeholder-val="{{ false }}">
+      <p style="font-size: 12.5px; color: #5B564C; margin: 10px 0 0;">Claude filled in the checks below and the overall verdict &mdash; open any step to see its reasoning, and adjust anything that doesn't fit.</p>
     </sc-if>
   </section>
 
@@ -75,6 +72,12 @@
         <button onClick="{{ v.onClick }}" style="{{ v.style }}">{{ v.label }}</button>
       </sc-for>
     </div>
+    <sc-if value="{{ hasAiRecommendations }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom: 14px; padding: 14px 16px; background: #FAF7F1; border: 1px solid #DED6C6; border-radius: 3px; font-size: 13.5px; line-height: 1.6; white-space: pre-wrap;">
+        <div style="font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #5B564C; font-weight: 600; margin-bottom: 8px;">How second-order change could work here</div>
+        {{ aiRecommendations }}
+      </div>
+    </sc-if>
     <textarea placeholder="Your diagnosis, in your own words&hellip;" value="{{ finalNote }}" onChange="{{ onFinalNoteChange }}" rows="3" style="width: 100%; box-sizing: border-box; font-size: 13.5px; font-family: -apple-system, sans-serif; line-height: 1.5; color: #23201B; border: 1px solid #DED6C6; border-radius: 3px; padding: 12px; resize: vertical; background: #FAF7F1;"></textarea>
     <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
       <button onClick="{{ saveEntry }}" style="font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 10px 16px; border-radius: 3px; border: 1.5px solid #2B6E6E; background: #2B6E6E; color: #fff; cursor: pointer;">Save this diagnosis</button>
@@ -168,7 +171,7 @@ class Component extends DCLogic {
     showLog: false,
     openStep: 0,
     aiLoading: false,
-    aiResult: "",
+    aiRecommendations: "",
     aiError: ""
   };
 
@@ -218,10 +221,10 @@ class Component extends DCLogic {
     if (this.state.aiLoading) return;
     const text = this.state.text.trim();
     if (!text) {
-      this.setState({ aiError: "Paste an exchange first.", aiResult: "" });
+      this.setState({ aiError: "Paste an exchange first.", aiRecommendations: "" });
       return;
     }
-    this.setState({ aiLoading: true, aiError: "", aiResult: "" });
+    this.setState({ aiLoading: true, aiError: "", aiRecommendations: "" });
     try {
       const res = await fetch("/.netlify/functions/diagnose", {
         method: "POST",
@@ -230,7 +233,13 @@ class Component extends DCLogic {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
-      this.setState({ aiResult: data.analysis, aiLoading: false });
+      this.setState(s => ({
+        aiLoading: false,
+        checked: { ...s.checked, ...(data.items || {}) },
+        notes: { ...s.notes, ...(data.notes || {}) },
+        verdict: data.verdict || s.verdict,
+        aiRecommendations: data.recommendations || ""
+      }));
     } catch (e) {
       this.setState({ aiError: e.message || "Something went wrong.", aiLoading: false });
     }
@@ -283,7 +292,7 @@ class Component extends DCLogic {
       openLog: () => this.setState({ showLog: true }),
       closeLog: () => this.setState({ showLog: false }),
       stopProp: (e) => e.stopPropagation(),
-      reset: () => this.setState({ text: "", notes: {}, checked: {}, verdict: null, finalNote: "", openStep: 0, aiResult: "", aiError: "" }),
+      reset: () => this.setState({ text: "", notes: {}, checked: {}, verdict: null, finalNote: "", openStep: 0, aiRecommendations: "", aiError: "" }),
       showLog: s.showLog,
       hasNoSaved: s.saved.length === 0,
       savedList,
@@ -291,8 +300,9 @@ class Component extends DCLogic {
       askClaude: () => this.askClaude(),
       aiButtonLabel: s.aiLoading ? "Asking Claude…" : "Ask Claude to analyze",
       aiError: s.aiError,
-      hasAiResult: !!s.aiResult,
-      aiResult: s.aiResult
+      hasAiHint: !!s.aiRecommendations,
+      hasAiRecommendations: !!s.aiRecommendations,
+      aiRecommendations: s.aiRecommendations
     };
   }
 }
