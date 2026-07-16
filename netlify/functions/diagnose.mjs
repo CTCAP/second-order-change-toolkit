@@ -70,6 +70,7 @@ export default async (req) => {
   }
 
   const data = await anthropicRes.json();
+  console.log("anthropic response shape:", JSON.stringify({ stop_reason: data.stop_reason, content: data.content, usage: data.usage }));
   const analysis = data.content?.[0]?.text ?? "";
 
   return jsonResponse(200, { analysis });
