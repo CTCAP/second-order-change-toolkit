@@ -24,21 +24,25 @@
     <p style="font-size: 15px; color: #5B564C; margin: 0; max-width: 46ch;">Paste an email or exchange. Work the seven checks. Land on a verdict.</p>
   </header>
 
-  <section style="background: #fff; border: 1px solid #DED6C6; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
-    <label style="display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #5B564C; font-weight: 600; margin-bottom: 10px;">The exchange</label>
-    <textarea placeholder="Paste the email, message, or a summary of the conversation here&hellip;" value="{{ text }}" onChange="{{ onTextChange }}" rows="7" style="width: 100%; box-sizing: border-box; font-family: -apple-system, sans-serif; font-size: 14.5px; line-height: 1.5; color: #23201B; border: 1px solid #DED6C6; border-radius: 3px; padding: 12px; resize: vertical; background: #FAF7F1;"></textarea>
-    <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
-      <button onClick="{{ askClaude }}" style="font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 3px; border: 1.5px solid #2B6E6E; background: #fff; color: #2B6E6E; cursor: pointer;">{{ aiButtonLabel }}</button>
-      <sc-if value="{{ aiError }}" hint-placeholder-val="{{ false }}">
-        <span style="font-size: 12.5px; color: #B5533C;">{{ aiError }}</span>
-      </sc-if>
-    </div>
-    <sc-if value="{{ hasAiHint }}" hint-placeholder-val="{{ false }}">
-      <p style="font-size: 12.5px; color: #5B564C; margin: 10px 0 0;">Claude filled in the checks below and the overall verdict &mdash; open any step to see its reasoning, and adjust anything that doesn't fit.</p>
-    </sc-if>
-  </section>
-
   <div style="display: flex; flex-direction: column; gap: 1px; background: #DED6C6; border: 1px solid #DED6C6; border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
+    <div style="background: #fff;">
+      <div style="display: flex; align-items: center; gap: 14px; padding: 16px 20px 4px;">
+        <span style="font-family: Georgia, serif; color: #2B6E6E; font-size: 13px; font-weight: 600; width: 22px;">00</span>
+        <span style="flex: 1; font-size: 15.5px; font-weight: 600;">The exchange</span>
+      </div>
+      <div style="padding: 4px 20px 20px 56px;">
+        <textarea placeholder="Paste the email, message, or a summary of the conversation here&hellip;" value="{{ text }}" onChange="{{ onTextChange }}" rows="7" style="width: 100%; box-sizing: border-box; font-family: -apple-system, sans-serif; font-size: 14.5px; line-height: 1.5; color: #23201B; border: 1px solid #DED6C6; border-radius: 3px; padding: 12px; resize: vertical; background: #FAF7F1;"></textarea>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+          <button onClick="{{ askClaude }}" style="font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 3px; border: 1.5px solid #2B6E6E; background: #fff; color: #2B6E6E; cursor: pointer;">{{ aiButtonLabel }}</button>
+          <sc-if value="{{ aiError }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 12.5px; color: #B5533C;">{{ aiError }}</span>
+          </sc-if>
+        </div>
+        <sc-if value="{{ hasAiHint }}" hint-placeholder-val="{{ false }}">
+          <p style="font-size: 12.5px; color: #5B564C; margin: 10px 0 0;">Claude filled in the checks below and the overall verdict &mdash; open any step to see its reasoning, and adjust anything that doesn't fit.</p>
+        </sc-if>
+      </div>
+    </div>
     <sc-for list="{{ steps }}" as="step" hint-placeholder-count="7">
       <div style="background: #fff;">
         <button onClick="{{ step.headOnClick }}" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: {{ step.headBg }}; border: none; cursor: pointer; text-align: left; font-family: inherit;">
