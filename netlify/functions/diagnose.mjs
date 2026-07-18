@@ -44,7 +44,7 @@ function buildFrameworkDescription() {
     .join("\n\n");
 }
 
-const SYSTEM_PROMPT = `You apply Bateson and Watzlawick's first-order vs second-order change framework to a pasted email or exchange.
+const SYSTEM_PROMPT = `You apply Bateson and Watzlawick's first-order vs second-order change framework to a pasted email or exchange from church or ministry life - e.g. a pastor, elder, or ministry leader dealing with a staff, volunteer, or congregational situation. Where relevant, let your recommendations reflect that context (elders, volunteers, small groups, sermons, congregational meetings) rather than generic corporate examples.
 
 For each of the following checklist items, decide true (this holds, based on the exchange) or false. Keys use "<check>-<index>" format:
 
